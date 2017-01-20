@@ -1,0 +1,30 @@
+
+plugins {
+  id 'edu.sc.seis.launch4j' version '2.2.0'
+}
+
+allprojects {
+    apply plugin: 'java'
+}
+
+project(':module-A') {
+    apply plugin: 'application'
+    mainClassName = 'A'
+    sourceSets {
+        config.resources.srcDirs = ['config']
+    }
+    dependencies {
+        compile project(':module-B')
+    }
+}
+ 
+launch4j {
+  mainClassName = 'A'
+  dontWrapJar = true
+  jar = "module-a.jar"
+  copyConfigurable = project(':module-A').jar.outputs.files +
+    project(':module-A').sourceSets.config.resources + 
+    project(':module-B').jar.outputs.files
+}
+
+tasks.build.dependsOn(createExe)
